@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Search iTunes</string>
+    <string name="search">Values</string>
+    <string name="search_hint">Search values...</string>
+</resources>
