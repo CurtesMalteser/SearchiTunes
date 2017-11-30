@@ -42,12 +42,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button btnGetData;
 
-    private String imgURL;
-    private String imgURLtest;
-
-    private Bitmap bitmap;
-    private Bitmap bitmapTest;
-
     private ListView listViewResults;
 
     private ItemAdapter itemAdapter;
@@ -104,8 +98,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 search = search.replaceAll(" ", "+");
             }
 
-            ItunesStuff itunesStuff = new ItunesStuff();
-
             ArrayList<ItunesStuff> itunesStuffArrayList = new ArrayList<>();
 
             ItunesHTTPClient itunesHTTPClient = new ItunesHTTPClient();
@@ -113,16 +105,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String data = (itunesHTTPClient.getItunesStuffData(search));
 
             try {
-                //itunesStuff = JsonItunesParser.getItunesStuff(data);
                 itunesStuffArrayList = JsonItunesParser.getItunesStuff(data);
-                itunesStuff = itunesStuffArrayList.get(0);
-                //imgURL = itunesStuff.getArtistViewURL();
-                bitmap = (itunesHTTPClient.getBitMapFromURL(imgURL));
 
-                bitmap =itunesStuff.getArtistViewURL();
-
-                int size = itunesStuffArrayList.size();
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < itunesStuffArrayList.size(); i++) {
                     String track = itunesStuffArrayList.get(i).getTrackName();
                     Log.d("AJDB", "getTrackName: " + track);
                 }
@@ -147,7 +132,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
-
         }
     }
 }

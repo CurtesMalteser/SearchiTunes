@@ -63,7 +63,7 @@ public class ItunesHTTPClient {
         return null;
     }
 
-    public Bitmap getBitMapFromURL (String stringUrl) {
+    public static Bitmap getBitMapFromURL (String stringUrl) {
         Bitmap bitmap = null;
 
         try {

@@ -35,7 +35,7 @@ public class JsonItunesParser {
         for (int i = 0; i < resultsJsonArray.length(); i++) {
             JSONObject artistObject = resultsJsonArray.getJSONObject(i);
 
-            Bitmap bitmap = getBitMapFromURL(getString("artworkUrl100", artistObject));
+            Bitmap bitmap = ItunesHTTPClient.getBitMapFromURL(getString("artworkUrl100", artistObject));
 
             itunesStuffArrayList.add(i, new ItunesStuff(
                     i,
@@ -49,15 +49,10 @@ public class JsonItunesParser {
             ));
         }
 
-        /*for (int y = 0; y < itunesStuffArrayList.size(); y++) {
-            Log.d("AJDB", "getItunesStuff: " + itunesStuffArrayList.get(y).getTrackName());
-        }*/
-
-        //return itunesStuff;
         return itunesStuffArrayList;
     }
 
-    //this return all JSONObject to be parsed
+    // this return all JSONObject to be parsed
     private static JSONObject getJsonObject(String tagName, JSONObject jsonObject) throws JSONException {
         return jsonObject.getJSONObject(tagName);
     }
@@ -83,20 +78,4 @@ public class JsonItunesParser {
     private static boolean getBollean(String tagName, JSONObject jsonObject) throws JSONException {
         return jsonObject.getBoolean(tagName);
     }
-
-    public static Bitmap getBitMapFromURL(String stringUrl) {
-        Bitmap bitmap = null;
-
-        try {
-            URL url = new URL(stringUrl);
-            InputStream inputStream = url.openStream();
-            bitmap = BitmapFactory.decodeStream(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        return bitmap;
-    }
-
 }
