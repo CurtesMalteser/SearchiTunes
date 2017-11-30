@@ -10,8 +10,9 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.curtesmalteser.searchitunes.ItunesHTTPClient;
 import com.curtesmalteser.searchitunes.R;
-import com.curtesmalteser.searchitunes.model.ITunesData;
+import com.curtesmalteser.searchitunes.model.ItunesStuff;
 
 import java.util.List;
 
@@ -21,10 +22,10 @@ import java.util.List;
 
 public class ItemAdapter extends BaseAdapter implements ListAdapter{
 
-    private List<ITunesData> mItems;
+    private List<ItunesStuff> mItems;
     private Context mContext;
 
-    public ItemAdapter(Context context, List<ITunesData> items) {
+    public ItemAdapter(Context context, List<ItunesStuff> items) {
         this.mItems = items;
 
         // The context here is use to pass the activity because we are
@@ -35,18 +36,24 @@ public class ItemAdapter extends BaseAdapter implements ListAdapter{
     @Override
     public View getView(int position, View view, ViewGroup parent) {
 
+        ItunesHTTPClient itunesHTTPClient = new ItunesHTTPClient();
+
         LayoutInflater inflater = (LayoutInflater)
                 mContext.getSystemService(mContext.LAYOUT_INFLATER_SERVICE);
 
         view = inflater.inflate(R.layout.list_items, null);
 
-        ITunesData iTunesItems = mItems.get(position);
+        ItunesStuff iTunesItems = mItems.get(position);
         String trackName = iTunesItems.getTrackName();
-        String wrapperType = iTunesItems.getWrapperType();
+        String wrapperType = iTunesItems.getType();
         String kind = iTunesItems.getKind();
         String artistName = iTunesItems.getArtistName();
         String collectionName = iTunesItems.getCollectionName();
-        Bitmap artworkUrl100 = iTunesItems.getArtworkUrl100();
+        Bitmap imgURL = iTunesItems.getArtistViewURL();
+
+
+
+
 
 
         TextView mTextTrackName = (TextView) view.findViewById(R.id.tv_track_name);
@@ -61,7 +68,12 @@ public class ItemAdapter extends BaseAdapter implements ListAdapter{
         mTextKind.setText(kind);
         mTextArtistName.setText(artistName);
         mTextCollectionName.setText(collectionName);
-        mTextArtworkUrl.setImageBitmap(artworkUrl100);
+
+
+
+            mTextArtworkUrl.setImageBitmap(imgURL);
+
+
 
         return view;
     }

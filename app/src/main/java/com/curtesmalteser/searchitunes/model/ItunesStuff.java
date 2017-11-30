@@ -1,5 +1,7 @@
 package com.curtesmalteser.searchitunes.model;
 
+import android.graphics.Bitmap;
+
 import java.util.ArrayList;
 
 /**
@@ -8,20 +10,32 @@ import java.util.ArrayList;
 
 public class ItunesStuff {
 
-    private String results;
+    private int id;
     private String type;
     private String kind;
     private String artistName;
     private String collectionName;
     private String trackName;
-    private String artistViewURL;
+    private Bitmap artistViewURL;
 
-    public String getResults() {
-        return results;
+    public ItunesStuff(){}
+
+    public ItunesStuff(int id,String type, String kind, String artistName, String collectionName, String trackName, Bitmap artistViewURL) {
+        this.id = id;
+        this.type = type;
+        this.kind = kind;
+        this.artistName = artistName;
+        this.collectionName = collectionName;
+        this.trackName = trackName;
+        this.artistViewURL = artistViewURL;
     }
 
-    public void setResults(String results) {
-        this.results = results;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getType() {
@@ -64,11 +78,11 @@ public class ItunesStuff {
         this.trackName = trackName;
     }
 
-    public String getArtistViewURL() {
+    public Bitmap getArtistViewURL() {
         return artistViewURL;
     }
 
-    public void setArtistViewURL(String artistViewURL) {
+    public void setArtistViewURL(Bitmap artistViewURL) {
         this.artistViewURL = artistViewURL;
     }
 

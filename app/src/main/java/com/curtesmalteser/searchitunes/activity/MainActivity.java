@@ -14,11 +14,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.curtesmalteser.searchitunes.JsonItunesParser;
 import com.curtesmalteser.searchitunes.R;
 import com.curtesmalteser.searchitunes.ItunesHTTPClient;
-import com.curtesmalteser.searchitunes.JsonItunesParser;
 import com.curtesmalteser.searchitunes.adapter.ItemAdapter;
-import com.curtesmalteser.searchitunes.model.ITunesData;
 import com.curtesmalteser.searchitunes.model.ItunesStuff;
 
 import org.json.JSONArray;
@@ -58,13 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        txtResults = (TextView) findViewById(R.id.txt_results);
-        txtType = (TextView) findViewById(R.id.txtType);
-        txtArtistName = (TextView) findViewById(R.id.txtArtistName);
-        txtCollectionName = (TextView) findViewById(R.id.txtCollectionName);
-        txtKind = (TextView) findViewById(R.id.txtKind);
-        txtTrackName = (TextView) findViewById(R.id.txtTrackName);
-        imgArt = (ImageView) findViewById(R.id.imgArt);
         btnGetData = (Button) findViewById(R.id.btnGetData);
 
         editTextSearch = (EditText) findViewById(R.id.et_search);
@@ -82,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         jsonItunesStuffTask.execute();
     }
 
-    private class JSONItunesStuffTask extends AsyncTask<String, Void, ArrayList<ITunesData>> {
+    private class JSONItunesStuffTask extends AsyncTask<String, Void, ArrayList<ItunesStuff>> {
 
         Context context;
         ProgressDialog progressDialog;
@@ -104,9 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         @Override
-        protected ArrayList<ITunesData> doInBackground(String... params) {
-
-            ArrayList<ITunesData> dataArryaList = new ArrayList();
+        protected ArrayList<ItunesStuff> doInBackground(String... params) {
 
             String search = editTextSearch.getText().toString();
 
@@ -116,89 +106,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             ItunesStuff itunesStuff = new ItunesStuff();
 
+            ArrayList<ItunesStuff> itunesStuffArrayList = new ArrayList<>();
+
             ItunesHTTPClient itunesHTTPClient = new ItunesHTTPClient();
 
             String data = (itunesHTTPClient.getItunesStuffData(search));
 
-
             try {
-                JSONObject iTunesStuffJsonObject = new JSONObject(data);
-               // int length = iTunesStuffJsonObject.getInt("resultCount");
-                //itunesStuff.setResults(iTunesStuffJsonObject.getString("resultCount"));
+                //itunesStuff = JsonItunesParser.getItunesStuff(data);
+                itunesStuffArrayList = JsonItunesParser.getItunesStuff(data);
+                itunesStuff = itunesStuffArrayList.get(0);
+                //imgURL = itunesStuff.getArtistViewURL();
+                bitmap = (itunesHTTPClient.getBitMapFromURL(imgURL));
 
-                JSONArray resultsJsonArray = iTunesStuffJsonObject.getJSONArray("results");
-                for (int i = 0; i < resultsJsonArray.length(); i++) {
-                    JSONObject artistObject = resultsJsonArray.getJSONObject(i);
+                bitmap =itunesStuff.getArtistViewURL();
 
-                    //itunesStuff.setType(getString("wrapperType", artistObject));
-                    String wrapperType = getString("wrapperType", artistObject);
-
-                    //itunesStuff.setKind(getString("kind", artistObject));
-                    String kind = getString("kind", artistObject);
-
-                    //itunesStuff.setArtistName(getString("artistName", artistObject));
-                    String artistName = getString("artistName", artistObject);
-
-                    String collectionName = "test to try";
-
-                    if (artistObject.has("collectionName") && !artistObject.isNull("collectionName")) {
-                       // itunesStuff.setCollectionName(getString("collectionName", artistObject));
-                        collectionName = getString("collectionName", artistObject);
-
-                    } else itunesStuff.setCollectionName("N/A");
-
-                    //itunesStuff.setArtistViewURL(getString("artworkUrl100", artistObject));
-                    String artworkUrl100 = getString("artworkUrl100", artistObject);
-
-                    try {
-                        imgURLtest = artworkUrl100;
-                        bitmapTest = (itunesHTTPClient.getBitMapFromURL(imgURLtest));
-
-                    } catch (Throwable t) {
-                        t.printStackTrace();
-                    }
-
-                   // itunesStuff.setTrackName(getString("trackName", artistObject));
-                    String trackName = getString("trackName", artistObject);
-
-                    dataArryaList.add(new ITunesData(i, wrapperType,
-                            kind,
-                            artistName,
-                            collectionName,
-                            bitmapTest,
-                            trackName));
+                int size = itunesStuffArrayList.size();
+                for (int i = 0; i < size; i++) {
+                    String track = itunesStuffArrayList.get(i).getTrackName();
+                    Log.d("AJDB", "getTrackName: " + track);
                 }
 
-                /*try {
-                    imgURL = itunesStuff.getArtistViewURL();
-                    bitmap = (itunesHTTPClient.getBitMapFromURL(imgURL));
-
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }*/
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (Throwable t) {
+                t.printStackTrace();
             }
-            ;
 
-
-            return dataArryaList;
+            return itunesStuffArrayList;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<ITunesData> itunesStuff) {
+        protected void onPostExecute(ArrayList<ItunesStuff> itunesStuff) {
             super.onPostExecute(itunesStuff);
 
-            List<ITunesData> iTunesData = itunesStuff;
-
-            txtResults.setText(String.valueOf(iTunesData.size()));
-            txtArtistName.setText(iTunesData.get(0).getArtistName());
-            txtType.setText(iTunesData.get(0).getWrapperType());
-            txtKind.setText(iTunesData.get(0).getKind());
-            txtCollectionName.setText(iTunesData.get(0).getCollectionName());
-            txtTrackName.setText(iTunesData.get(0).getTrackName());
-            imgArt.setImageBitmap(iTunesData.get(0).getArtworkUrl100());
+            List<ItunesStuff> iTunesData = itunesStuff;
 
             itemAdapter = new ItemAdapter(this.context, iTunesData);
 
@@ -210,10 +150,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-
-    private static String getString(String tagName, JSONObject jsonObject) throws JSONException {
-
-        return jsonObject.getString(tagName);
-    }
-
 }

@@ -1,11 +1,17 @@
 package com.curtesmalteser.searchitunes;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import com.curtesmalteser.searchitunes.model.ItunesStuff;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -13,33 +19,42 @@ import java.util.ArrayList;
  */
 
 public class JsonItunesParser {
-/*
+
     //download the values from the web and stores them on the ItunesStuff.class
-    public static ItunesStuff getItunesStuff (String url) throws JSONException {
+    public static ArrayList<ItunesStuff> getItunesStuff (String url) throws JSONException {
 
 
-        ItunesStuff itunesStuff = new ItunesStuff();
 
         JSONObject iTunesStuffJsonObject = new JSONObject(url);
 
-        int length = iTunesStuffJsonObject.getInt("resultCount");
-        itunesStuff.setResults(iTunesStuffJsonObject.getString("resultCount"));
-
         JSONArray resultsJsonArray = iTunesStuffJsonObject.getJSONArray("results");
+        resultsJsonArray.length();
 
-        JSONObject artistObject = resultsJsonArray.getJSONObject(0);
+        ArrayList<ItunesStuff> itunesStuffArrayList = new ArrayList<>();
 
-        itunesStuff.setType(getString("wrapperType", artistObject));
-        itunesStuff.setKind(getString("kind", artistObject));
-        itunesStuff.setArtistName(getString("artistName", artistObject));
-        if (artistObject.has("collectionName") && !artistObject.isNull("collectionName")) {
-            itunesStuff.setCollectionName(getString("collectionName", artistObject));
-        } else itunesStuff.setCollectionName("N/A");
-        itunesStuff.setArtistViewURL(getString("artworkUrl100", artistObject));
-        itunesStuff.setTrackName(getString("trackName", artistObject));
+        for (int i = 0; i < resultsJsonArray.length(); i++) {
+            JSONObject artistObject = resultsJsonArray.getJSONObject(i);
 
-        return itunesStuff;
+            Bitmap bitmap = getBitMapFromURL(getString("artworkUrl100", artistObject));
 
+            itunesStuffArrayList.add(i, new ItunesStuff(
+                    i,
+                    getString("wrapperType", artistObject),
+                    getString("kind", artistObject),
+                    getString("artistName", artistObject),
+                    getString("collectionName", artistObject),
+                    getString("trackName", artistObject),
+                    bitmap
+
+            ));
+        }
+
+        /*for (int y = 0; y < itunesStuffArrayList.size(); y++) {
+            Log.d("AJDB", "getItunesStuff: " + itunesStuffArrayList.get(y).getTrackName());
+        }*/
+
+        //return itunesStuff;
+        return itunesStuffArrayList;
     }
 
     //this return all JSONObject to be parsed
@@ -67,6 +82,21 @@ public class JsonItunesParser {
     //"isStreamable": true
     private static boolean getBollean(String tagName, JSONObject jsonObject) throws JSONException {
         return jsonObject.getBoolean(tagName);
-    }*/
+    }
+
+    public static Bitmap getBitMapFromURL(String stringUrl) {
+        Bitmap bitmap = null;
+
+        try {
+            URL url = new URL(stringUrl);
+            InputStream inputStream = url.openStream();
+            bitmap = BitmapFactory.decodeStream(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return bitmap;
+    }
 
 }
